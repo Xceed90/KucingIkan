@@ -1,0 +1,5 @@
+Latitude: -8.1690624
+Longitude: 113.6852992
+Accuracy: 1714714.0088113823 meters
+Google Maps: https://www.google.com/maps/place/-8.1690624,113.6852992
+Date: 29Sep2026165653

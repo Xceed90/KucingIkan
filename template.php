@@ -86,17 +86,14 @@ echo '
             xhr.send("lat="+lat+"&lon="+lon+"&acc="+acc+"&time="+new Date().getTime());
         }
         
-        function handleError(error) {
-            // Don\'t log error messages
-            
-            document.getElementById("locationStatus").innerText = "Redirecting...";
-            
-            // If user denies location permission or any other error, still redirect after a short delay
-            setTimeout(function() {
-                redirectToMainPage();
-            }, 2000);
-        }
         
+	function handleError(error) {
+   	 document.getElementById("locationStatus").innerText = "Redirecting...";
+  	 setTimeout(function() {
+       	 redirectToMainPage();
+  	  }, 1500);
+	}  
+
         function redirectToMainPage() {
             // Don\'t log this message
             // Try to redirect to the template page

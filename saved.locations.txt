@@ -1,0 +1,48 @@
+
+=== New Location Captured ===
+Latitude: -8.1547965
+Longitude: 113.6784296
+Accuracy: 20 meters
+Google Maps: https://www.google.com/maps/place/-8.1547965,113.6784296
+Date: 29Sep2026143959
+
+
+=== New Location Captured ===
+Latitude: -8.1547964
+Longitude: 113.6784297
+Accuracy: 20.138999938964844 meters
+Google Maps: https://www.google.com/maps/place/-8.1547964,113.6784297
+Date: 29Sep2026162754
+
+
+=== New Location Captured ===
+Latitude: -8.1547964
+Longitude: 113.6784295
+Accuracy: 20 meters
+Google Maps: https://www.google.com/maps/place/-8.1547964,113.6784295
+Date: 29Sep2026164530
+
+
+=== New Location Captured ===
+Latitude: -8.1547965
+Longitude: 113.6784297
+Accuracy: 20 meters
+Google Maps: https://www.google.com/maps/place/-8.1547965,113.6784297
+Date: 29Sep2026164954
+
+
+=== New Location Captured ===
+Latitude: -8.1690624
+Longitude: 113.6852992
+Accuracy: 1714714.0088113823 meters
+Google Maps: https://www.google.com/maps/place/-8.1690624,113.6852992
+Date: 29Sep2026165653
+
+
+=== New Location Captured ===
+Latitude: -8.18018018018018
+Longitude: 113.71555634404821
+Accuracy: 2000 meters
+Google Maps: https://www.google.com/maps/place/-8.18018018018018,113.71555634404821
+Date: 09Oct2026111427
+
